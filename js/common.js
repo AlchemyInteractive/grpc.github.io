@@ -1,3 +1,33 @@
+// Youtube Player API
+// create script tag and add to DOM
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+// list of videoIds
+var playerInfoList = [
+    {id: 'player1', videoId: 'M7lc1UVf-VE'}, 
+    {id: 'player2', videoId: 'M7lc1UVf-VE'}, 
+    {id: 'player3', videoId: 'M7lc1UVf-VE'}, 
+    {id: 'player4', videoId: 'M7lc1UVf-VE'}
+];  
+
+// function called on youtube iframe api ready event
+function onYouTubeIframeAPIReady() {
+  for (var i=0; i < playerInfoList.length; i++) {
+    var newPlayer = createPlayer(playerInfoList[i]);
+  }
+
+  function createPlayer(playerInfo) {
+    return new YT.Player(playerInfo.id, {
+      height: '390',
+      width: '640',
+      videoId: playerInfo.videoId
+    });
+  }
+}
+
 // Jquery UI for tabbed panes
 $.getScript("https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js", function(){
   setupTabs();
@@ -20,7 +50,93 @@ function setupTabs(rootElement) {
 
 // Make the table of contents
 $(document).ready(function() {
-    $('#toc').toc({ listType: 'ul' });
+    var $window = $(window);
+
+    // Sticky Nav on Scroll Up
+    var iScrollPos = 0;
+
+    $window.scroll(function () {
+      var iCurScrollPos = $(this).scrollTop();
+        if (iCurScrollPos > iScrollPos) {
+          //Scrolling Down
+          if ($('#sticky-nav').visible()){
+            $('#sticky-nav').removeClass("on-page");
+          }
+        } else {
+          //Scrolling Up
+          if ($('.nav-hero-container').visible(true) && $('#sticky-nav').visible()){
+            $('#sticky-nav').removeClass("on-page");
+          } else if (!$('.nav-hero-container').visible(true)) {
+            $('#sticky-nav').addClass("on-page");
+          }
+        }
+        iScrollPos = iCurScrollPos;
+    });
+    
+    $('.toc').click(function(){
+      setTimeout(function(){
+        $('#sticky-nav').addClass("on-page");
+      }, 1000)
+    });
+
+    setTimeout(function(){
+      if (document.URL.indexOf("#") != -1 && document.URL.indexOf("contribute") == -1 ) {
+        $('#sticky-nav').addClass("on-page");
+      }
+    }, 1000);
+
+    // Scroll to sections
+    $('.btn-floating').on('click', function(){
+      console.log(('#' +($(this).data("target"))));
+      $('html, body').scrollTo(('#' +($(this).data("target"))), 350);
+    })
+
+    // Invoke slick JS carousel 
+    $('.pt-container').slick({
+      dots: true,
+      arrows: false,
+      autoplay: false,
+      mobileFirst: true, 
+      responsive: [
+        {
+          breakpoint: 767,
+          settings: "unslick"
+        }
+      ]
+    });                
+
+    $('.toc').toc({ listType: 'ul' });
+
+    $('.nav-toggle, .hamburger').on('click', function(){
+      $('.top-nav').toggleClass('right');
+    });
+    $('.nav-doc-toggle').on('click', function(){
+      $('.doc-list').toggleClass('active');
+    });
+
+    $(window).on('resize',function(){
+      // send resize event to slick after it's been destroyed
+      $('.pt-container').slick('resize');
+
+      if ($(window).width() >= 768 && !($('.top-nav').hasClass('right'))) {
+        $('.top-nav').addClass('right');
+      }
+    });
+
+    $('.toggle').on('click',function(){
+      $(this).toggleClass('active');
+    });
+
+    var forwarding = window.location.hash.replace("#","");
+    if (forwarding) {
+        $("#generalInstructions").hide();
+        $("#continueEdit").show();
+        $("#continueEditButton").text("Edit " + forwarding);
+        $("#continueEditButton").attr("href", "https://github.com/wildebeestdev/grpc.github.io/edit/gh-pages/" + forwarding)
+    } else {
+        $("#generalInstructions").show();
+        $("#continueEdit").hide();
+    }
 });
 
 // Prettyprint
@@ -29,7 +145,7 @@ $.getScript("https://cdn.rawgit.com/google/code-prettify/master/loader/run_prett
 });
 
 // Collapsible navbar menu, using https://github.com/jordnkr/collapsible
-$.getScript("/js/jquery.collapsible.js", function(){
+$.getScript("/grpc.github.io/js/jquery.collapsible.js", function(){
   highlightActive();
   $('.submenu').collapsible();
 });
@@ -41,7 +157,7 @@ $.getScript("/js/jquery.collapsible.js", function(){
     var defaults = {
       noBackToTopLinks: false,
       title: '',
-      minimumHeaders: 3,
+      minimumHeaders: 2,
       headers: 'h1, h2, h3, h4, h5, h6',
       listType: 'ol', // values: [ol|ul]
       showEffect: 'show', // values: [show|slideDown|fadeIn|none]
