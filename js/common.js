@@ -7,26 +7,77 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 // list of videoIds
 var playerInfoList = [
-    {id: 'player1', videoId: 'M7lc1UVf-VE'}, 
-    {id: 'player2', videoId: 'M7lc1UVf-VE'}, 
-    {id: 'player3', videoId: 'M7lc1UVf-VE'}, 
-    {id: 'player4', videoId: 'M7lc1UVf-VE'}
+    {type: 'yt', key: 'M7lc1UVf-VE'}, 
+    {type: 'yt', key: 'M7lc1UVf-VE'}, 
+    {type: 'slideshare', key: 'http://www.slideshare.net/sujatatibre/g-rpc-talk-with-intel-3'}, 
+    {type: 'slideshare', key: 'zG8P1hzAavHRVP'}
 ];  
 
-// function called on youtube iframe api ready event
-function onYouTubeIframeAPIReady() {
-  for (var i=0; i < playerInfoList.length; i++) {
-    var newPlayer = createPlayer(playerInfoList[i]);
+function createPlayer(key) {
+  $('#player').append('<iframe id="ytplayer" type="text/html" width="640" height="390" src="https://www.youtube.com/embed/'+key+'" frameborder="0" allowfullscreen>');
+}
+
+//function createSlideShare(key) {
+  //$('#player').append('<iframe src="//www.slideshare.net/slideshow/embed_code/key/'+key+'" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="//www.slideshare.net/sujatatibre/g-rpc-talk-with-intel-3" title="Grpc talk with intel (3)" target="_blank">G rpc talk with intel (3)</a> </strong> from <strong><a href="//www.slideshare.net/sujatatibre" target="_blank">Intel</a></strong> </div>'); 
+//}
+
+$('.pt').on('click', function() {
+  var self = this,
+      video = playerInfoList.filter(function(obj) {
+        return obj.key == $(self).data('key'); 
+      })[0];
+
+
+  if (video.type == 'yt') {
+    createPlayer(video.key);
+  } else {
+    //createSlideShare(key);
+    window.open(video.key);
   }
 
-  function createPlayer(playerInfo) {
-    return new YT.Player(playerInfo.id, {
-      height: '390',
-      width: '640',
-      videoId: playerInfo.videoId
-    });
+  resizePlayer();
+  $('#player iframe').on('load', function() {
+    $('.pt-lightbox').addClass('active');
+  });
+});
+
+
+$('.pt-lightbox').on('click', function() {
+  if ($(this).hasClass('active')) {
+    $(this).removeClass('active');
+    $(this).find('iframe').remove();
+    $('body, html').removeClass('noscroll');
   }
+});
+
+// Resize Player 
+function resizePlayer() {
+  var $inner = $('.pt-player'),
+      defaultHeight = window.innerHeight || document.documentElement.clientHeight,
+      defaultWidth = window.innerWidth || document.documentElement.clientWidth,
+      maxHeight = defaultHeight*.75,
+      maxWidth = defaultWidth*.75,
+      newWidth = maxWidth,
+      newHeight = 16 * maxWidth / 9;
+
+  if (defaultWidth > defaultHeight){
+      if (newHeight > maxHeight){
+        newWidth = 16 * maxHeight / 9;
+        newHeight = maxHeight;
+      }   
+  } else {
+      newWidth = 16 * maxHeight / 9;
+      newHeight = maxHeight;
+      if (newWidth > maxWidth){
+          newHeight = 9 * maxWidth / 16; 
+          newWidth = maxWidth;
+      }   
+  }   
+
+  $inner.css({"width": newWidth, "height": newHeight});
 }
+
+
 
 // Jquery UI for tabbed panes
 $.getScript("https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js", function(){
@@ -93,17 +144,51 @@ $(document).ready(function() {
 
     // Invoke slick JS carousel 
     $('.pt-container').slick({
-      dots: true,
-      arrows: false,
+      arrows: true,
+      dots: false,
       autoplay: false,
-      mobileFirst: true, 
+      infinite: true,
+      slidesToShow: 4,
+      slidesToScroll: 1, 
       responsive: [
         {
-          breakpoint: 767,
-          settings: "unslick"
+          breakpoint: 1024,
+          settings: {
+            slidesToShow: 3,
+            dots: false,
+            arrows: true 
+          }
+        },
+        {
+          breakpoint: 800,
+          settings: {
+            slidesToShow: 3,
+            dots: true,
+            arrows: false
+          }
+        },
+        {
+          breakpoint: 600,
+          settings: {
+            slidesToShow: 2,
+            dots: true,
+            arrows: false
+          }
+        },
+        {
+          breakpoint: 480,
+          settings: {
+            slidesToShow: 1,
+            dots: true,
+            arrows: false
+          }
         }
       ]
     });                
+
+    $('.slick-next').on('click', function() {
+      $('.slick-prev').addClass('active');
+    });
 
     $('.toc').toc({ listType: 'ul' });
 
@@ -115,8 +200,13 @@ $(document).ready(function() {
     });
 
     $(window).on('resize',function(){
-      // send resize event to slick after it's been destroyed
+       //send resize event to slick after it's been destroyed
       $('.pt-container').slick('resize');
+
+      //reset event listener on resize
+      $('.slick-next').on('click', function() {
+        $('.slick-prev').addClass('active');
+      });
 
       if ($(window).width() >= 768 && !($('.top-nav').hasClass('right'))) {
         $('.top-nav').addClass('right');
