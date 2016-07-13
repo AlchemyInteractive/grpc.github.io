@@ -5,6 +5,7 @@ layout: docs
 sidenav: doc-side-guides-nav.html
 title: Guides
 type: markdown
+customjs: //survey.g.doubleclick.net/async_survey?site=dgxvheagfp4ai24o6y2ammm5fe
 ---
 <p class="lead">
 This document introduces you to gRPC (and its friend, protocol buffers).  If you’re new to gRPC and/or protocol buffers, read this! If you just want to dive in and see gRPC in action first, see our [Quick Starts].
