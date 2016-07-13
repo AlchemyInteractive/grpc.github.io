@@ -1,41 +1,52 @@
 // Footer
 footer {
+  background-color: $footerColor;
+  box-shadow: 0px 500px 0px 500px $footerColor;
+  color: $white;
+  overflow: hidden;
+  padding: 35px 0 0px;
+  position: relative;
+
   @media (max-width: 767px) {
+    padding: 35px 0 120px;
+
     ul {
       li {
         display: none;
       }
-        
+
       &.active li {
         display: initial;
       }
     }
   }
-  background-color: $footerColor;
-  box-shadow: 0px 500px 0px 500px $footerColor;
-  color: $white;
-  overflow: hidden;
-  padding: 35px 0 120px;
-  position: relative;
 
   a {
     color: $white;
+
     &:hover {
       text-decoration: underline;
       color: $white;
     }
+
     &::after {
       display: none;
     }
   }
+
+  a.external:after {
+    display: none;
+  }
+
   .active {
     display: initial;
   }
+
   .footer-logo {
     width: 75px;
     margin-left: -8px;
     padding: 0 0 10px 0;
-    
+
     @media (min-width: 768px) {
       padding: 0 0 20px 0;
     }
@@ -81,6 +92,7 @@ footer {
 
     @media (min-width: 768px) {
       padding: 0 0 0 35px;
+      margin: 0 0 50px 0;
     }
 
     p {
@@ -90,7 +102,6 @@ footer {
       letter-spacing: .5px;
       line-height: 36px;
     }
-
 
     .right-link-headers  {
       font-weight: 400;
@@ -121,7 +132,7 @@ footer {
 
       .right-link-headers {
         padding: 0 0 10px;
-        
+
         &:after {
           content: none;
         }
@@ -131,7 +142,6 @@ footer {
     @media (min-width: 1025px) {
       width: 49.5%;
     }
-
   }
 
   .footer-sections {
@@ -143,7 +153,7 @@ footer {
     border: none;
     height: 1px;
 
-    @media(min-width: 768px) {
+    @media (min-width: 768px) {
       display: none;
     }
   }
@@ -160,13 +170,14 @@ footer {
     &::before {
       content: '';
       display: inline-block;
-      background: url($image-url) no-repeat center/cover; 
+      background: url($image-url) no-repeat center/cover;
       width: 35px;
       height: 35px;
       vertical-align: middle;
       margin: 0 15px 0 0;
     }
   }
+
   .github {
     @include social-icon('../img/icon_github.svg');
   }
@@ -181,5 +192,9 @@ footer {
 
   .stack-overflow {
     @include social-icon('../img/icon_stack-overflow.svg');
+  }
+
+  .youtube {
+    @include social-icon('../img/icon_youtube.svg');
   }
 }

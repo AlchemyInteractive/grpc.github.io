@@ -5,6 +5,7 @@ layout: docs
 title: Quick Start
 type: markdown
 sidenav: doc-side-quickstart-nav.html
+customjs: //survey.g.doubleclick.net/async_survey?site=dgxvheagfp4ai24o6y2ammm5fe
 ---
 <p class="lead">
 All you need to get started with gRPC
