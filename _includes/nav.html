@@ -16,7 +16,7 @@
         </div>
 
         {% assign current = page.url | downcase | split: '/' %}
-        {% if current[1] != 'index.html' %}
+        {% if page.url == '/index.html'  %}
         <ul class="nav col-xs-10">
         {% else %}
         <ul class="nav col-xs-9">
