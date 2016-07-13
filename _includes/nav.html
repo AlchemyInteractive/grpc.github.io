@@ -15,8 +15,12 @@
           </button>
         </div>
 
+        {% assign current = page.url | downcase | split: '/' %}
+        {% if page.url == '/index.html'  %}
         <ul class="nav col-xs-10">
-          {% assign current = page.url | downcase | split: '/' %}
+        {% else %}
+        <ul class="nav col-xs-9">
+        {% endif %}
           <li><a href="{{ site.baseurl }}/about/" {% if current[1] == 'about' %}class='current'{% endif %}>About</a></li>
           <li><a href="{{ site.baseurl }}/docs/" {% if current[1] == 'docs' %}class='current'{% endif %}>Docs</a></li>
           <li><a href="{{ site.baseurl }}/blog/" {% if current[1] == 'blog' %}class='current'{% endif %}>Blog</a></li>
