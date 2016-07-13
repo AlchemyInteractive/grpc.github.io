@@ -1,6 +1,6 @@
 ---
 bodyclass: docs
-headline: '[Guides Page Headline]'
+headline: Tutorials
 layout: docs
 title: Tutorials
 type: markdown
