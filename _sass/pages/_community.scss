@@ -12,6 +12,10 @@
   .community-section {
     margin: 45px 0;
 
+    .external-link-icon {
+      margin: -5px 0 0;
+    }
+
     a::after {
       display: none;
     }
