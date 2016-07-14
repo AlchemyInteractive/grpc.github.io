@@ -8,6 +8,8 @@
     font-size: 13px;
     letter-spacing: 1px;
     text-align: right;
+    position: relative;
+    z-index: 9012;
 
     li {
       display: inline-block;
