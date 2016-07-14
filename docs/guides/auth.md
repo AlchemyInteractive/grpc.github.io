@@ -171,7 +171,7 @@ creds = GRPC::Core::Credentials.new(load_certs)  # load_certs typically loads a 
 stub = Helloworld::Greeter::Stub.new('myservice.example.com', creds)
 ```
 
-#### Authenticate with Google using scopeless credentials (recommended approach)
+#### Authenticate with Google
 
 ```ruby
 require 'googleauth'  # from http://www.rubydoc.info/gems/googleauth/0.1.0
@@ -183,17 +183,31 @@ combined_creds = ssl_creds.compose(call_creds)
 stub = Helloworld::Greeter::Stub.new('greeter.googleapis.com', combined_creds)
 ```
 
-#### Authenticate with Google using Oauth2 token (legacy approach)
+### C++
 
-```ruby
-require 'googleauth'  # from http://www.rubydoc.info/gems/googleauth/0.1.0
+#### Base case - no encryption or authentication
+```cpp
+auto channel = grpc::CreateChannel("localhost:50051", InsecureChannelCredentials());
+std::unique_ptr<Greeter::Stub> stub(Greeter::NewStub(channel));
 ...
-ssl_creds = GRPC::Core::ChannelCredentials.new(load_certs)  # load_certs typically loads a CA roots file
-scope = 'https://www.googleapis.com/auth/grpc-testing'
-authentication = Google::Auth.get_application_default(scope)
-call_creds = GRPC::Core::CallCredentials.new(authentication.updater_proc)
-combined_creds = ssl_creds.compose(call_creds)
-stub = Helloworld::Greeter::Stub.new('greeter.googleapis.com', combined_creds)
+```
+
+#### With server authentication SSL/TLS
+
+```cpp
+auto channel_creds = grpc::SslCredentials(grpc::SslCredentialsOptions());
+auto channel = grpc::CreateChannel("myservice.example.com", creds);
+std::unique_ptr<Greeter::Stub> stub(Greeter::NewStub(channel));
+...
+```
+
+#### Authenticate with Google
+
+```cpp
+auto creds = grpc::GoogleDefaultCredentials();
+auto channel = grpc::CreateChannel("greeter.googleapis.com", creds);
+std::unique_ptr<Greeter::Stub> stub(Greeter::NewStub(channel));
+...
 ```
 
 ### C&#35;
@@ -214,7 +228,8 @@ var channel = new Channel("myservice.example.com", channelCredentials);
 var client = new Greeter.GreeterClient(channel);
 ```
 
-#### Authenticate with Google using scopeless credentials (recommended approach)
+#### Authenticate with Google
+
 
 ```csharp
 using Grpc.Auth;  // from Grpc.Auth NuGet package
@@ -223,22 +238,6 @@ using Grpc.Auth;  // from Grpc.Auth NuGet package
 var channelCredentials = await GoogleGrpcCredentials.GetApplicationDefaultAsync();
 
 var channel = new Channel("greeter.googleapis.com", channelCredentials);
-var client = new Greeter.GreeterClient(channel);
-...
-```
-
-#### Authenticate with Google using OAuth2 token (legacy approach)
-
-```csharp
-using Grpc.Auth;  // from Grpc.Auth NuGet package
-...
-string scope = "https://www.googleapis.com/auth/grpc-testing";
-var googleCredential = await GoogleCredential.GetApplicationDefaultAsync();
-if (googleCredential.IsCreateScopedRequired)
-{
-    googleCredential = googleCredential.CreateScoped(new[] { scope });
-}
-var channel = new Channel("greeter.googleapis.com", googleCredential.ToChannelCredentials());
 var client = new Greeter.GreeterClient(channel);
 ...
 ```
@@ -278,7 +277,7 @@ channel = implementations.secure_channel('myservice.example.com', 443, creds)
 stub = helloworld_pb2.beta_create_Greeter_stub(channel)
 ```
 
-#### Authenticate with Google using OAuth2 token (legacy approach)
+#### Authenticate with Google
 
 ```python
 transport_creds = implementations.ssl_channel_credentials(open('roots.pem').read(), None, None)
@@ -342,7 +341,7 @@ ManagedChannel channel = NettyChannelBuilder.forAddress("myservice.example.com",
 GreeterGrpc.GreeterStub stub = GreeterGrpc.newStub(channel);
 ```
 
-#### Authenticate with Google using OAuth2 token
+#### Authenticate with Google
 
 The following code snippet shows how you can call the [Google Cloud PubSub API](https://cloud.google.com/pubsub/overview) using gRPC with a service account. The credentials are loaded from a key stored in a well-known location or by detecting that the application is running in an environment that can provide one automatically, e.g. Google Compute Engine. While this example is specific to Google and its services, similar patterns can be followed for other service providers.
 
@@ -377,7 +376,7 @@ var ssl_creds = grpc.credentials.createSsl(root_certs);
 var stub = new helloworld.Greeter('myservice.example.com', ssl_creds);
 ```
 
-#### Authenticate with Google using scopeless credentials (recommended approach)
+#### Authenticate with Google
 
 ```js
 // Authenticating with Google
@@ -408,7 +407,6 @@ var scope = 'https://www.googleapis.com/auth/grpc-testing';
 });
 ```
 
-
 ### PHP
 
 #### Base case - No encryption/authorization
@@ -420,7 +418,7 @@ $client = new helloworld\GreeterClient('localhost:50051', [
 ...
 ```
 
-#### Authenticate with Google using scopeless credentials (recommended approach)
+#### Authenticate with Google
 
 ```php
 function updateAuthMetadataCallback($context)

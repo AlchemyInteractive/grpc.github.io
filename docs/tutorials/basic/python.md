@@ -30,7 +30,7 @@ With gRPC you can define your service once in a .proto file and implement client
 The example code for this tutorial is in [grpc/grpc/examples/python/route_guide](https://github.com/grpc/grpc/tree/{{ site.data.config.grpc_release_branch }}/examples/python/route_guide). To download the example, clone the `grpc` repository by running the following command:
 
 ```
-$ git clone https://github.com/grpc/grpc.git
+$ git clone -b $(curl -L http://grpc.io/release) https://github.com/grpc/grpc
 ```
 
 Then change your current directory to `examples/python/route_guide`:
@@ -104,12 +104,18 @@ message Point {
 
 ## Generating client and server code
 
-Next you need to generate the gRPC client and server interfaces from your .proto service definition. You do this using the protocol buffer compiler `protoc` with a special gRPC Python plugin. Make sure you've installed protoc and followed the gRPC Python plugin [installation instructions](https://github.com/grpc/grpc/blob/{{ site.data.config.grpc_release_branch }}/INSTALL.md) first):
+Next you need to generate the gRPC client and server interfaces from your .proto service definition.
 
-With `protoc` and the gRPC Python plugin installed, use the following command to generate the Python code:
+First, install the grpcio-tools package:
 
 ```
-$ protoc -I ../../protos --python_out=. --grpc_out=. --plugin=protoc-gen-grpc=`which grpc_python_plugin` ../../protos/route_guide.proto
+$ pip install grpcio-tools
+```
+
+Use the following command to generate the Python code:
+
+```
+$ python -m grpc.tools.protoc -I../../protos --python_out=. --grpc_python_out=. ../../protos/route_guide.proto
 ```
 
 Note that as we've already provided a version of the generated code in the example repository, running this command regenerates the appropriate file rather than creates a new one. The generated code file is called `route_guide_pb2.py` and contains:

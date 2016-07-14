@@ -1,12 +1,13 @@
+kramdown:
+  input: GFM
+  hard_wrap: false
+
 markdown:
   kramdown
 
 baseurl: /grpc.github.io
 
 githuburl: https://github.com/wildebeestdev/grpc.github.io/edit/gh-pages
-
-kramdown:
-   input: GFM
 
 sass:
   style: compressed
